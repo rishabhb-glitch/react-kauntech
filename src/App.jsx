@@ -196,21 +196,23 @@ function App() {
         event.clientX - (rect.left + rect.width / 2);
       const y =
         event.clientY - (rect.top + rect.height / 2);
-      
+
       // Calculate rotation
       const rotationY = (x / (rect.width / 2)) * 18;
       const rotationX = -(y / (rect.height / 2)) * 18;
-      
+
       // Calculate Z position (depth effect) - move closer when cursor in center
       const distFromCenter = Math.sqrt(x * x + y * y);
-      const maxDist = Math.sqrt(
-        rect.width * rect.width + rect.height * rect.height,
-      ) / 2;
+      const maxDist =
+        Math.sqrt(
+          rect.width * rect.width +
+            rect.height * rect.height,
+        ) / 2;
       const z = 12 * (1 - distFromCenter / maxDist);
-      
+
       // Calculate scale for depth perception
       const scale = 1 + z / 150;
-      
+
       // Dynamic shadow based on rotation
       const shadowBlur = 40 + Math.abs(rotationY) * 2;
       const shadowOffsetX = (rotationY / 18) * 15;
@@ -604,6 +606,9 @@ function App() {
                   </button>
                 </div>
               </div>
+              <div className="phone-edge-left"></div>
+              <div className="phone-edge-right"></div>
+              <div className="phone-edge-bottom"></div>
             </div>
             <div className="floating-card card-1">
               <FaBullseye className="floating-card-icon" />
