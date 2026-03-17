@@ -196,14 +196,34 @@ function App() {
         event.clientX - (rect.left + rect.width / 2);
       const y =
         event.clientY - (rect.top + rect.height / 2);
-      const rotationY = (x / (rect.width / 2)) * 12;
-      const rotationX = -(y / (rect.height / 2)) * 12;
+      
+      // Calculate rotation
+      const rotationY = (x / (rect.width / 2)) * 18;
+      const rotationX = -(y / (rect.height / 2)) * 18;
+      
+      // Calculate Z position (depth effect) - move closer when cursor in center
+      const distFromCenter = Math.sqrt(x * x + y * y);
+      const maxDist = Math.sqrt(
+        rect.width * rect.width + rect.height * rect.height,
+      ) / 2;
+      const z = 12 * (1 - distFromCenter / maxDist);
+      
+      // Calculate scale for depth perception
+      const scale = 1 + z / 150;
+      
+      // Dynamic shadow based on rotation
+      const shadowBlur = 40 + Math.abs(rotationY) * 2;
+      const shadowOffsetX = (rotationY / 18) * 15;
+      const shadowOffsetY = (rotationX / 18) * 15 + 20;
 
       gsap.to(phone, {
         rotationX,
         rotationY,
-        ease: "power3.out",
-        duration: 0.35,
+        z,
+        scale,
+        ease: "power2.out",
+        duration: 0.4,
+        boxShadow: `${shadowOffsetX}px ${shadowOffsetY}px ${shadowBlur}px rgba(123, 47, 247, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3)`,
       });
     };
 
@@ -211,8 +231,12 @@ function App() {
       gsap.to(phone, {
         rotationX: 0,
         rotationY: 0,
-        duration: 0.6,
+        z: 0,
+        scale: 1,
+        duration: 0.8,
         ease: "power3.out",
+        boxShadow:
+          "0 20px 60px rgba(123, 47, 247, 0.3), 0 0 1px rgba(255, 255, 255, 0.1)",
       });
     };
 
@@ -502,82 +526,84 @@ function App() {
             </div>
           </div>
           <div className="hero-visual">
-            <div className="phone-mockup" ref={phoneInnerRef}>
+            <div className="phone-glow-bg"></div>
+            <div
+              className="phone-mockup"
+              ref={phoneInnerRef}
+            >
               <div className="phone-screen">
-                  <div className="app-header">
-                    <span className="app-title">
-                      Visitor Card Scan
-                    </span>
-                    <div className="app-stats">
-                      <div className="app-stat">
-                        <span className="app-stat-number">
-                          {counters.scanned}
-                        </span>
-                        <span className="app-stat-label">
-                          Scanned
-                        </span>
-                      </div>
-                      <div className="app-stat">
-                        <span className="app-stat-number">
-                          {counters.pending}
-                        </span>
-                        <span className="app-stat-label">
-                          Pending
-                        </span>
-                      </div>
-                      <div className="app-stat">
-                        <span className="app-stat-number">
-                          {counters.uploaded}
-                        </span>
-                        <span className="app-stat-label">
-                          Uploaded
-                        </span>
-                      </div>
+                <div className="app-header">
+                  <span className="app-title">
+                    Visitor Card Scan
+                  </span>
+                  <div className="app-stats">
+                    <div className="app-stat">
+                      <span className="app-stat-number">
+                        {counters.scanned}
+                      </span>
+                      <span className="app-stat-label">
+                        Scanned
+                      </span>
                     </div>
-                  </div>
-                  <div className="app-tabs">
-                    <div
-                      className={`app-tab ${activeTab === "business-card" ? "active" : ""}`}
-                      onClick={() =>
-                        setActiveTab("business-card")
-                      }
-                    >
-                      <FaCamera className="tab-icon" />
-                      <span>Business Card</span>
+                    <div className="app-stat">
+                      <span className="app-stat-number">
+                        {counters.pending}
+                      </span>
+                      <span className="app-stat-label">
+                        Pending
+                      </span>
                     </div>
-                    <div
-                      className={`app-tab ${activeTab === "qr-code" ? "active" : ""}`}
-                      onClick={() =>
-                        setActiveTab("qr-code")
-                      }
-                    >
-                      <FaQrcode className="tab-icon" />
-                      <span>QR Code</span>
+                    <div className="app-stat">
+                      <span className="app-stat-number">
+                        {counters.uploaded}
+                      </span>
+                      <span className="app-stat-label">
+                        Uploaded
+                      </span>
                     </div>
-                    <div
-                      className={`app-tab ${activeTab === "manual" ? "active" : ""}`}
-                      onClick={() => setActiveTab("manual")}
-                    >
-                      <FaEdit className="tab-icon" />
-                      <span>Manual</span>
-                    </div>
-                  </div>
-                  <div className="app-scan-area">
-                    <FaCamera className="camera-icon" />
-                    <p className="scan-text">
-                      Ready to Scan Business Cards
-                    </p>
-                    <p className="scan-subtext">
-                      Position card in frame and capture
-                    </p>
-                    <button className="scan-btn">
-                      Open Camera
-                    </button>
-                    <button className="gallery-btn">
-                      Gallery
-                    </button>
                   </div>
                 </div>
+                <div className="app-tabs">
+                  <div
+                    className={`app-tab ${activeTab === "business-card" ? "active" : ""}`}
+                    onClick={() =>
+                      setActiveTab("business-card")
+                    }
+                  >
+                    <FaCamera className="tab-icon" />
+                    <span>Business Card</span>
+                  </div>
+                  <div
+                    className={`app-tab ${activeTab === "qr-code" ? "active" : ""}`}
+                    onClick={() => setActiveTab("qr-code")}
+                  >
+                    <FaQrcode className="tab-icon" />
+                    <span>QR Code</span>
+                  </div>
+                  <div
+                    className={`app-tab ${activeTab === "manual" ? "active" : ""}`}
+                    onClick={() => setActiveTab("manual")}
+                  >
+                    <FaEdit className="tab-icon" />
+                    <span>Manual</span>
+                  </div>
+                </div>
+                <div className="app-scan-area">
+                  <FaCamera className="camera-icon" />
+                  <p className="scan-text">
+                    Ready to Scan Business Cards
+                  </p>
+                  <p className="scan-subtext">
+                    Position card in frame and capture
+                  </p>
+                  <button className="scan-btn">
+                    Open Camera
+                  </button>
+                  <button className="gallery-btn">
+                    Gallery
+                  </button>
+                </div>
+              </div>
             </div>
             <div className="floating-card card-1">
               <FaBullseye className="floating-card-icon" />
