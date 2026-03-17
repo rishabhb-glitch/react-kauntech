@@ -502,12 +502,8 @@ function App() {
             </div>
           </div>
           <div className="hero-visual">
-            <div className="phone-mockup">
-              <div
-                className="phone-mockup-inner"
-                ref={phoneInnerRef}
-              >
-                <div className="phone-screen">
+            <div className="phone-mockup" ref={phoneInnerRef}>
+              <div className="phone-screen">
                   <div className="app-header">
                     <span className="app-title">
                       Visitor Card Scan
@@ -582,7 +578,6 @@ function App() {
                     </button>
                   </div>
                 </div>
-              </div>
             </div>
             <div className="floating-card card-1">
               <FaBullseye className="floating-card-icon" />
